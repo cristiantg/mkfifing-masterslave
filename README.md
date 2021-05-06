@@ -9,11 +9,11 @@ This project will help you to communicate your independent docker containers (un
 
 1. Please notice that you will need to run inside the WEB container```make cli prepareCli``` if you make changes to ```cli.c``` or ```prepareClic.```. And copy/replace the output files ```cli``` and ```prepareCli```.
 
-1. Run ```start.sh```. It is set in the entrypoint of KALDI. Thus, ```server.sh``` will be listening new requests forever.
+1. ```start.sh``` is automatically started as teh entrypoint of KALDI on ```docker-compose.yml```. Thus, ```server.sh``` will be listening new requests forever.
 
 1. A client app makes a http request to WEB. WEB runs on a JavaScript-node script```prepareCli request response ID```. This will trigger ```server.sh``` on KALDI.
 
-1. KALDI creates three new files are automatically on /ipc: ```serverID.sh```, ```requestID``` and ```responseID```. ID=<login><idaudio>.
+1. KALDI creates three new files are automatically on /ipc: ```serverID.sh```, ```requestID``` and ```responseID```. ID=login+idaudio.
 
 1. ```serverID.sh``` is initiated on the background.
 
