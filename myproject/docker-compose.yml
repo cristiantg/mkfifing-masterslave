@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+    web:
+        container_name: audioserver-web
+        build: ./audioserver
+        env_file:
+            - ./.web-variables.env
+        ports:
+            - "80:3000"
+        depends_on:
+            - mongo
+            - kaldi
+        volumes:
+            - ../output:/output
+            - ../raw_data:/raw_data
+            - ../ipc:/ipc
+            - ./web/cli:/ipc/cli
+            - ./web/prepareCli:/ipc/prepareCli
+              #- ./web/cli.c:/ipc/cli.c
+              #- ./web/prepareCli.c:/ipc/prepareCli.c
+    mongo:
+        container_name: audioserver-mongo
+        image: mongo
+        env_file:
+            - ./.mongo-variables.env
+        depends_on:
+           - kaldi
+        volumes:
+            - ../output:/output
+            - ./mongodb:/data/db
+            - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+            - ../raw_data:/raw_data
+            - ../ipc:/ipc
+    kaldi:
+        container_name: audioserver-kaldi
+        command: bash -c "/ipc/start.sh && bash"
+        stdin_open: true
+        tty: true
+        build: ./kaldi-scripts
+        volumes:
+            - ../restasr:/opt/kaldi/egs/restasr
+            - ../output:/output
+            - ../raw_data:/raw_data
+            - ../ipc:/ipc
+            - ./kaldi/start.sh:/ipc/start.sh
+            - ./kaldi/server.sh:/ipc/server.sh
+            - ./kaldi/server-load.sh:/ipc/server-load.sh
+            - ./kaldi/serverID.sh:/ipc/serverID.sh
